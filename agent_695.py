@@ -328,11 +328,12 @@ def _momentum_gate(harmony, mode, direction, streak):
 # ———————————————————————————————————————————————————————————————————————————
 
 def _sample_parent():
-    """Sample parent from archive biased by CMP with diversity bonus for stepping stones."""
+    """Sample parent from archive biased by CMP, diversity, and size (favor smaller ancestors)."""
     archive = _load_archive()
     if len(archive) < 3:
         return None, None, None, False
 
+    current_size = len(open(__file__, encoding="utf-8").read())
     viable = []
     archive_len = len(archive)
     window = archive[-50:] if archive_len > 50 else archive
@@ -346,7 +347,10 @@ def _sample_parent():
             harmony = entry.get("harmony", 0.5)
             age = archive_len - (window_offset + i)
             diversity_bonus = 0.2 if age > 5 and harmony < 0.6 else 0.0
-            score = (0.6 * cmp) + (0.2 * harmony) + diversity_bonus
+            candidate_size = len(open(version_file, encoding="utf-8").read())
+            size_ratio = candidate_size / max(current_size, 1)
+            size_bonus = max(0.0, 1.0 - size_ratio) * 0.3
+            score = (0.5 * cmp) + (0.15 * harmony) + diversity_bonus + size_bonus
             viable.append((entry, version_file, max(score, 0.01)))
 
     if not viable:
@@ -958,6 +962,12 @@ if not any("N_CANDIDATES" in ap for ap in _ap_list):
     _record_global("anti_patterns",
         "dynamic N_CANDIDATES reduction below 2 = single-point-of-failure. "
         "Stress requires MORE redundancy, not less. Floor is always 2.")
+    _ap_list = _load_memory().get("global", {}).get("anti_patterns", [])
+if not any("complexity ceiling" in ap for ap in _ap_list):
+    _record_global("anti_patterns",
+        "whole-file regeneration above ~1000 lines: 67% syntax "
+        "failure rate observed. Bias parent sampling toward smaller "
+        "ancestors. Next architectural fix: diff-based mutations.")
 
 if "--auto-approve" in sys.argv:
     AUTO_APPROVE = True
