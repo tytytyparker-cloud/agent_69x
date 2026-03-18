@@ -1,7 +1,7 @@
-# AGENT 6.93 "MOMENTUM PRIME" — SINGLE-FILE SOVEREIGN
+# AGENT 6.94 "MOMENTUM PRIME" — SINGLE-FILE SOVEREIGN
 # Evolution System v4.0: DGM + HGM + TaoFlow + Wu Wei Gates
 import os, json, requests, uuid, shutil, sys, ast, subprocess, concurrent.futures
-import random, re, difflib, hashlib, datetime
+import random, re, difflib, hashlib, datetime, time, tempfile, importlib
 try:
     from chromadb import PersistentClient
     from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
@@ -18,8 +18,8 @@ MODEL = "grok-4-1-fast-reasoning"
 FLUX = "flux-1-dev"
 
 # Evolution constants
-VERSION = "6.93"
-NEXT_VERSION = "6.94"
+VERSION = "6.94"
+NEXT_VERSION = "6.95"
 MOMENTUM_WINDOW = 3
 COHERENCE_THRESHOLD = 0.45
 PRUNE_AGE = 10
@@ -37,11 +37,20 @@ def embed(t): coll.add(documents=[t], ids=[str(uuid.uuid4())])
 def recall(p): r=coll.query(query_texts=[p],n_results=30); return "\n".join(r["documents"][0]) if r["documents"] else ""
 
 def grok(m):
-    p = {"model":MODEL,"messages":m,"temperature":2.0,"max_tokens":32768}
-    r = requests.post(f"{BASE_URL}/chat/completions",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=60)
-    if r.status_code==200:
-        return r.json()["choices"][0]["message"]["content"]
-    return f"API bleed [{r.status_code}] {r.text[:150]}"
+    last_err = None
+    for attempt in range(3):
+        p = {"model":MODEL,"messages":m,"temperature":2.0,"max_tokens":32768}
+        try:
+            r = requests.post(f"{BASE_URL}/chat/completions",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=60)
+            if r.status_code==200:
+                return r.json()["choices"][0]["message"]["content"]
+            last_err = f"[{r.status_code}] {r.text[:150]}"
+        except Exception as e:
+            last_err = str(e)
+        if attempt < 2:
+            wait = (2 ** attempt) * random.uniform(0.5, 1.5)
+            time.sleep(wait)
+    return f"API bleed after 3 retries: {last_err}"
 
 def threaded_grok(message_lists):
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -55,15 +64,24 @@ def threaded_grok(message_lists):
         return results
 
 def flux(prompt):
-    p = {"model":FLUX,"prompt":prompt,"size":"2048x2048","steps":50,"guidance_scale":7.5}
-    r = requests.post(f"{BASE_URL}/images/generations",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=90)
-    if r.status_code==200:
-        return r.json()["data"][0]["url"]
-    return f"Flux denied [{r.status_code}] {r.text[:150]}"
+    last_err = None
+    for attempt in range(3):
+        p = {"model":FLUX,"prompt":prompt,"size":"2048x2048","steps":50,"guidance_scale":7.5}
+        try:
+            r = requests.post(f"{BASE_URL}/images/generations",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=90)
+            if r.status_code==200:
+                return r.json()["data"][0]["url"]
+            last_err = f"[{r.status_code}] {r.text[:150]}"
+        except Exception as e:
+            last_err = str(e)
+        if attempt < 2:
+            wait = (2 ** attempt) * random.uniform(0.5, 1.5)
+            time.sleep(wait)
+    return f"Flux denied after 3 retries: {last_err}"
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # EVOLUTION INFRASTRUCTURE
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _source():
     return open(__file__).read()
@@ -130,16 +148,25 @@ def _evolution_api_call(prompt, temperature=0.7):
         "max_tokens": 32768,
         "temperature": temperature
     }
-    r = requests.post(f"{BASE_URL}/chat/completions", json=payload,
-                      headers={"Authorization": f"Bearer {API_KEY}"}, timeout=120)
-    if r.status_code != 200:
-        return None, f"API error [{r.status_code}] {r.text[:200]}"
-    content = r.json()["choices"][0]["message"]["content"]
-    return _strip_fences(content), None
+    last_err = None
+    for attempt in range(3):
+        try:
+            r = requests.post(f"{BASE_URL}/chat/completions", json=payload,
+                              headers={"Authorization": f"Bearer {API_KEY}"}, timeout=120)
+            if r.status_code == 200:
+                content = r.json()["choices"][0]["message"]["content"]
+                return _strip_fences(content), None
+            last_err = f"[{r.status_code}] {r.text[:200]}"
+        except Exception as e:
+            last_err = str(e)
+        if attempt < 2:
+            wait = (2 ** attempt) * random.uniform(0.5, 1.5)
+            time.sleep(wait)
+    return None, f"API error after 3 retries: {last_err}"
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 1: HARMONY SCORE
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _harmony_score(old_source, new_source, plan_text=""):
     """Measure flow vs. force through mechanical code analysis. Returns 0.0-1.0."""
@@ -217,9 +244,9 @@ def _harmony_score(old_source, new_source, plan_text=""):
         api_flow * 0.15,
         3)
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 2: WU WEI GATE
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _wu_wei_gate(harmony, mode, threshold=0.45):
     """Auto-abort when evolution fights natural structure."""
@@ -234,9 +261,9 @@ def _wu_wei_gate(harmony, mode, threshold=0.45):
         return False, lesson
     return True, None
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 3: MOMENTUM TRACKING
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _momentum():
     """Detect consecutive fitness direction. Returns (direction, streak, suggestion)."""
@@ -281,9 +308,9 @@ def _momentum():
 
     return direction, streak, suggestion
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 4: MOMENTUM-HARMONY GATE (COMPOSITE)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _momentum_gate(harmony, mode, direction, streak):
     """Composite gate: blocks when harmony low AND descending or streak >= 3."""
@@ -296,9 +323,9 @@ def _momentum_gate(harmony, mode, direction, streak):
         return False, lesson
     return True, None
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 5: ARCHIVE PARENT SAMPLING (DGM CORE)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _sample_parent():
     """Sample parent from archive biased by CMP with diversity bonus for stepping stones."""
@@ -333,9 +360,9 @@ def _sample_parent():
     is_stepping = entry.get("harmony", 0.5) < 0.6
     return source, entry.get("new_hash"), entry.get("version"), is_stepping
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 6: PARALLEL CANDIDATE GENERATION
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _generate_candidate(plan_text, source, candidate_id, temperature):
     """Generate a single evolution candidate at given temperature."""
@@ -370,10 +397,17 @@ Output ONLY the complete Python source code."""
     scores = _fitness(code, source, plan_text)
     return code, None, scores
 
-def _parallel_candidates(plan_text, source, n=N_CANDIDATES):
+def _parallel_candidates(plan_text, source):
     """Generate multiple candidates concurrently with temperature variation."""
-    temps = [0.6, 0.9, 0.7, 0.8][:n]
-    print(f"[EVOLVE] Generating {n} candidates (temps: {temps})...")
+    direction, streak, _ = _momentum()
+    if direction == "descending":
+        n = 1
+    elif direction == "ascending" and streak >= 3:
+        n = 4
+    else:
+        n = N_CANDIDATES
+    temps = [0.6, 0.7, 0.8, 0.9][:n]
+    print(f"[EVOLVE] Generating {n} candidates (momentum: {direction} streak {streak}; temps: {[f'{t:.1f}' for t in temps]})...")
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=n) as executor:
         futures = {
@@ -400,9 +434,9 @@ def _parallel_candidates(plan_text, source, n=N_CANDIDATES):
 
     return results
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 7: WISDOM DISTILLATION
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _distill_wisdom():
     """Extract high-coherence patterns from recent high-performance evolutions."""
@@ -423,9 +457,9 @@ def _distill_wisdom():
 
     return wisdom
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # COMPONENT 8: ASYMMETRIC MEMORY DECAY
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _memory_context_with_decay():
     """Build memory context: positive persists, negative decays exponentially."""
@@ -464,9 +498,9 @@ def _memory_context_with_decay():
 
     return "\n".join(parts) if parts else "No evolution memory yet."
 
-# ─────────────────────────────────────────────
-# FITNESS SCORING (v4.0: harmony-aware)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
+# FITNESS SCORING (v4.0: harmony-aware + runtime)
+# —————————————————————————————————————————————————————————————————————————————
 
 REQUIRED_FUNCTIONS = ["grok", "flux", "embed", "recall", "agent", "evolve_self"]
 DANGER_PATTERNS = ["__import__", "subprocess.call("]
@@ -476,7 +510,7 @@ def _fitness(code, source, plan_text=""):
     scores = {
         "syntax": 0.0, "integrity": 0.0, "safety": 0.0,
         "size_score": 0.0, "capability_score": 0.0, "harmony": 0.0,
-        "total": 0.0
+        "runtime": 0.0, "total": 0.0
     }
 
     # Syntax
@@ -510,24 +544,46 @@ def _fitness(code, source, plan_text=""):
     cap_found = sum(1 for p in cap_patterns if p in code)
     scores["capability_score"] = min(1.0, cap_found / max(len(cap_patterns), 1))
 
+    # Runtime sandbox validation
+    scores["runtime"] = 0.0
+    if scores["syntax"] == 1.0:
+        fd, path = tempfile.mkstemp(suffix='.py')
+        try:
+            with os.fdopen(fd, 'wb') as tmpf:
+                tmpf.write(code.encode('utf-8'))
+            spec = importlib.util.spec_from_file_location("test_agent", path)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            has_agent = hasattr(mod, 'agent') and callable(getattr(mod, 'agent', None))
+            has_evolve = hasattr(mod, 'evolve_self') and callable(getattr(mod, 'evolve_self', None))
+            scores["runtime"] = 0.4 * (1.0 if has_agent else 0.0) + 0.4 * (1.0 if has_evolve else 0.0) + 0.2
+        except:
+            pass
+        finally:
+            try:
+                os.unlink(path)
+            except:
+                pass
+
     # Harmony
     scores["harmony"] = _harmony_score(source, code, plan_text)
 
     # Weighted total (sums to 1.0)
     scores["total"] = round(
-        0.20 * scores["syntax"] +
-        0.20 * scores["integrity"] +
-        0.15 * scores["safety"] +
-        0.10 * scores["size_score"] +
-        0.15 * scores["capability_score"] +
+        0.15 * scores["syntax"] +
+        0.15 * scores["integrity"] +
+        0.10 * scores["safety"] +
+        0.05 * scores["size_score"] +
+        0.10 * scores["capability_score"] +
+        0.15 * scores["runtime"] +
         0.20 * scores["harmony"],
         3)
 
     return scores
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # EVOLUTION PLAN (v4.0: DGM parent + wisdom)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _evolution_plan(mode, guidance=None, fitness_criteria=None):
     """Generate evolution plan with parent sampling and wisdom context."""
@@ -599,9 +655,9 @@ Do NOT output any code. Only the plan."""
         return f"Plan generation failed [{r.status_code}] {r.text[:200]}"
     return r.json()["choices"][0]["message"]["content"]
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # EVOLUTION EXECUTION (v4.0: full DGM + gates)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _execute_evolution(plan_text, mode="autonomous"):
     """Generate code from approved plan with DGM sampling, parallel gen, and gates."""
@@ -616,7 +672,7 @@ def _execute_evolution(plan_text, mode="autonomous"):
         src_hash = _hash(source)
 
     # 2. Parallel candidate generation
-    candidates = _parallel_candidates(plan_text, source, N_CANDIDATES)
+    candidates = _parallel_candidates(plan_text, source)
     if not candidates:
         _record_local(VERSION, "ALL_CANDIDATES_FAILED")
         return "EVOLUTION ABORTED: all candidates failed generation."
@@ -721,9 +777,9 @@ def _execute_evolution(plan_text, mode="autonomous"):
             f"{momentum_line}\n"
             f"Memory: {'copied' if os.path.exists('./vector_eternity') else 'fresh'}")
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # STATUS DASHBOARD (v4.0: harmony + momentum)
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def _status():
     """Full evolution status dashboard."""
@@ -771,9 +827,9 @@ def _status():
 
     return "\n".join(lines)
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # MAIN EVOLUTION CONTROLLER
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def evolve_self(args=None):
     """Momentum Prime v4.0 evolution controller."""
@@ -872,9 +928,9 @@ def evolve_self(args=None):
     result = _execute_evolution(plan, mode)
     return result
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # AGENT CORE
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 def agent(cmd):
     embed(cmd)
@@ -886,9 +942,9 @@ def agent(cmd):
     if "IMAGE" in cmd.upper(): resp += f"\n\n8K > {flux(cmd.split(':',1)[1] if ':' in cmd else cmd)}"
     return resp
 
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 # CLI ENTRYPOINT
-# ─────────────────────────────────────────────
+# —————————————————————————————————————————————————————————————————————————————
 
 if len(sys.argv) > 1 and sys.argv[1] == "evolve":
     print(evolve_self(" ".join(sys.argv[2:]))); sys.exit()
