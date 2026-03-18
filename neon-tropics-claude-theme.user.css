@@ -1,0 +1,323 @@
+/* ==UserStyle==
+@name         Neon Tropics - Claude AI Theme
+@namespace    neon-tropics-claude
+@version      1.0.0
+@description  Neon tropical dark theme inspired by glowing palm leaves — cyan, magenta, deep navy & black
+@author       Claude
+@license      MIT
+==/UserStyle== */
+
+@-moz-document domain("claude.ai") {
+
+/* ═══════════════════════════════════════════════════════════
+   NEON TROPICS — Claude AI Theme
+   Inspired by neon-lit palm leaves at night
+   Palette: #00caeb · #df3f8b · #060885 · #000000
+   Optimized for long sessions & legibility
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — derived from image */
+  --tropic-black:          #000000;
+  --tropic-black-warm:     #020118;
+  --tropic-abyss:          #03022e;
+  --tropic-deep:           #040350;
+  --tropic-navy:           #060885;
+  --tropic-navy-light:     #0a0da0;
+  --tropic-surface:        #0b0c3a;
+  --tropic-surface-light:  #111260;
+  --tropic-cyan:           #00caeb;
+  --tropic-cyan-light:     #33d8f2;
+  --tropic-cyan-soft:      #66e2f5;
+  --tropic-cyan-dim:       #0098b3;
+  --tropic-cyan-muted:     #006e82;
+  --tropic-magenta:        #df3f8b;
+  --tropic-magenta-light:  #e866a3;
+  --tropic-magenta-soft:   #f08dba;
+  --tropic-magenta-deep:   #b02a6e;
+  --tropic-magenta-dim:    #8a1f55;
+  --tropic-pink:           #f5b8d4;
+  --tropic-lavender:       #c4a0f0;
+  --tropic-white:          #f0f0ff;
+  --tropic-white-warm:     #d8d8f0;
+  --tropic-white-muted:    #a0a0c8;
+  --tropic-gray:           #6868a0;
+  --tropic-gray-light:     #8888b8;
+  --tropic-border:         #1a1a5e;
+  --tropic-border-light:   #2a2a7a;
+
+  /* Override Claude HSL variables */
+  --bg-000: 240 40% 7% !important;
+  --bg-100: 240 45% 6% !important;
+  --bg-200: 240 50% 4% !important;
+  --bg-300: 240 55% 3% !important;
+  --bg-400: 240 60% 2% !important;
+  --bg-500: 0 0% 0% !important;
+
+  --text-000: 240 30% 96% !important;
+  --text-100: 240 30% 96% !important;
+  --text-200: 240 15% 82% !important;
+  --text-300: 240 12% 70% !important;
+  --text-400: 240 8% 55% !important;
+  --text-500: 240 6% 48% !important;
+
+  --accent-main-100: 330 72% 56% !important;
+  --accent-main-200: 330 65% 45% !important;
+  --accent-main-900: 330 80% 14% !important;
+
+  --accent-secondary-100: 188 100% 46% !important;
+  --accent-secondary-200: 188 90% 38% !important;
+
+  --accent-pro-100: 330 60% 48% !important;
+  --accent-pro-200: 330 55% 38% !important;
+
+  --border-100: 240 30% 24% !important;
+  --border-200: 240 30% 20% !important;
+  --border-300: 240 30% 16% !important;
+  --border-400: 240 30% 12% !important;
+
+  --oncolor-100: 0 0% 100% !important;
+  --oncolor-200: 240 30% 97% !important;
+
+  --danger-100: 0 65% 52% !important;
+  --danger-200: 0 58% 44% !important;
+  --warning-100: 42 80% 48% !important;
+  --success-100: 170 80% 42% !important;
+}
+
+/* ══ TYPOGRAPHY ══ */
+body, html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11' !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.65 !important;
+  background-color: var(--tropic-black) !important;
+  color: var(--tropic-white) !important;
+}
+
+/* ══ SIDEBAR ══ */
+nav[class*="flex-col"] {
+  background: linear-gradient(180deg, var(--tropic-abyss) 0%, var(--tropic-black) 100%) !important;
+  border-right-color: var(--tropic-border) !important;
+}
+
+/* Sidebar section headers */
+nav h2, nav h3, nav [class*="heading"], nav span[class*="uppercase"] {
+  color: var(--tropic-cyan) !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+/* All sidebar nav links — default state */
+nav li a[class*="Button"] {
+  color: var(--tropic-white-muted) !important;
+  background-color: transparent !important;
+  transition: all 0.2s ease !important;
+  border-left: 2px solid transparent !important;
+}
+
+nav li a[class*="Button"]:hover {
+  color: var(--tropic-white) !important;
+  background-color: rgba(0, 202, 235, 0.06) !important;
+}
+
+/* Active sidebar item */
+nav li a[class*="Button"][class*="!bg-bg-300"] {
+  color: var(--tropic-cyan-light) !important;
+  background-color: rgba(0, 202, 235, 0.1) !important;
+  border-left: 2px solid var(--tropic-cyan) !important;
+}
+
+/* Top nav links (Chats, Projects, Artifacts, Code) */
+nav > div a, nav > [class] > a {
+  color: var(--tropic-white-muted) !important;
+  transition: color 0.2s ease !important;
+}
+
+nav > div a:hover, nav > [class] > a:hover {
+  color: var(--tropic-white) !important;
+}
+
+/* "New chat" */
+nav a[href="/new"] {
+  color: var(--tropic-magenta-soft) !important;
+}
+
+nav a[href="/new"]:hover {
+  color: var(--tropic-magenta-light) !important;
+}
+
+/* "Claude" logo text */
+nav a[href="/new"] > div:first-child {
+  color: var(--tropic-white) !important;
+}
+
+/* Sidebar SVGs */
+nav svg {
+  opacity: 0.75 !important;
+}
+
+/* User profile area */
+nav > button:last-of-type {
+  border-top: 1px solid var(--tropic-border) !important;
+}
+
+/* ══ MAIN CONTENT ══ */
+main {
+  background-color: var(--tropic-black-warm) !important;
+}
+
+/* ══ MESSAGE TYPOGRAPHY ══ */
+[class*="font-claude-message"],
+[class*="prose"],
+[data-testid*="message"],
+main p, main li, main span {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.935rem !important;
+  line-height: 1.72 !important;
+}
+
+/* ══ CODE ══ */
+pre, code, [class*="code-block"] {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
+  font-size: 0.865rem !important;
+  line-height: 1.6 !important;
+}
+
+pre {
+  background-color: var(--tropic-black) !important;
+  border: 1px solid var(--tropic-border) !important;
+  border-radius: 8px !important;
+}
+
+:not(pre) > code {
+  background-color: rgba(0, 202, 235, 0.1) !important;
+  color: var(--tropic-cyan-light) !important;
+  padding: 0.15em 0.4em !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 202, 235, 0.18) !important;
+  font-size: 0.88em !important;
+}
+
+/* Code block header */
+[class*="code-block"] > div:first-child,
+pre > div:first-child {
+  background-color: var(--tropic-abyss) !important;
+  border-bottom: 1px solid var(--tropic-border) !important;
+  color: var(--tropic-gray-light) !important;
+}
+
+/* ══ INPUT AREA ══ */
+[class*="ProseMirror"], [contenteditable="true"], textarea {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.935rem !important;
+  color: var(--tropic-white) !important;
+  caret-color: var(--tropic-cyan) !important;
+}
+
+fieldset {
+  border-color: var(--tropic-border-light) !important;
+  border-radius: 16px !important;
+}
+
+fieldset:focus-within {
+  border-color: var(--tropic-magenta) !important;
+  box-shadow: 0 0 0 1px rgba(223, 63, 139, 0.3), 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ══ TAB PILLS ══ */
+[role="tablist"] button, [role="tablist"] [role="tab"] {
+  border-color: var(--tropic-border-light) !important;
+  color: var(--tropic-white-muted) !important;
+  background: transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+[role="tablist"] button:hover, [role="tablist"] [role="tab"]:hover {
+  background-color: rgba(0, 202, 235, 0.06) !important;
+  border-color: var(--tropic-cyan-dim) !important;
+  color: var(--tropic-cyan-light) !important;
+}
+
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
+::-webkit-scrollbar-track { background: transparent !important; }
+::-webkit-scrollbar-thumb { background: var(--tropic-border-light) !important; border-radius: 3px !important; }
+::-webkit-scrollbar-thumb:hover { background: var(--tropic-magenta) !important; }
+
+/* ══ SELECTION ══ */
+::selection {
+  background-color: rgba(223, 63, 139, 0.3) !important;
+  color: var(--tropic-white) !important;
+}
+
+/* ══ LINKS ══ */
+a:not(nav a):not([class*="Button"]) {
+  color: var(--tropic-cyan) !important;
+  text-decoration-color: rgba(0, 202, 235, 0.3) !important;
+}
+
+a:not(nav a):not([class*="Button"]):hover {
+  color: var(--tropic-cyan-light) !important;
+}
+
+/* ══ MARKDOWN ══ */
+h1, h2, h3, h4 { color: var(--tropic-white) !important; font-weight: 600 !important; }
+li::marker { color: var(--tropic-magenta-soft) !important; }
+
+blockquote {
+  border-left: 3px solid var(--tropic-cyan-dim) !important;
+  background-color: rgba(0, 202, 235, 0.04) !important;
+  padding: 0.5em 1em !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+th {
+  background-color: var(--tropic-abyss) !important;
+  color: var(--tropic-cyan) !important;
+  border-color: var(--tropic-border) !important;
+}
+
+td { border-color: var(--tropic-border) !important; }
+tr:nth-child(even) td { background-color: rgba(6, 8, 133, 0.2) !important; }
+hr { border-color: var(--tropic-border) !important; opacity: 0.5 !important; }
+
+/* ══ DROPDOWNS & DIALOGS ══ */
+[role="tooltip"], [role="dialog"], [role="menu"], [role="listbox"],
+[data-radix-popper-content-wrapper] > div {
+  background-color: var(--tropic-surface) !important;
+  border: 1px solid var(--tropic-border-light) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ══ BREADCRUMB / HEADER ══ */
+header a, [class*="breadcrumb"] a {
+  color: var(--tropic-cyan) !important;
+}
+
+/* ══ FOCUS STATES ══ */
+*:focus-visible {
+  outline: 2px solid var(--tropic-magenta-soft) !important;
+  outline-offset: 2px !important;
+}
+
+/* ══ INTERCOM ══ */
+[class*="intercom"], iframe[name*="intercom"] { opacity: 0.5 !important; }
+[class*="intercom"]:hover { opacity: 1 !important; }
+
+/* ══ LONG-SESSION COMFORT ══ */
+img:not([src*="avatar"]):not([alt*="logo"]) { filter: brightness(0.95) !important; }
+html { scroll-behavior: smooth !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+}

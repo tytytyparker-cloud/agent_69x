@@ -1,0 +1,869 @@
+/* ==UserStyle==
+@name           Claude Geode Agate Theme
+@namespace      github.com/tytytyparker-cloud/agent_69x
+@version        1.0.0
+@description    A dark geode/agate-inspired theme for claude.ai — deep black marble with gold veining, amethyst purples, teal-emerald greens, and crystalline lavender accents.
+@author         agent_69x
+@homepageURL    https://github.com/tytytyparker-cloud/agent_69x
+@license        MIT
+@preprocessor   stylus
+==/UserStyle== */
+
+@-moz-document domain("claude.ai") {
+
+  /* ============================================================
+     GEODE AGATE PALETTE
+     Extracted from the amethyst geode cross-section image:
+       - Deep black marble:    #080808, #0e0c10
+       - Gold veining:         #c4a265, #d4b876, #a8894e
+       - Deep amethyst:        #2d1b4e, #3a2260, #4a2272
+       - Medium purple:        #6b3fa0, #7b52b0
+       - Teal/emerald:         #0d4d42, #1a6b5a, #2a8a75
+       - Lavender crystal:     #9b7cc4, #b49dd6, #d4c8e8
+       - Inner crystal white:  #e8e0f0, #f0ebf7
+     ============================================================ */
+
+  :root {
+    /* --- Core background tones (black marble) --- */
+    --geode-bg-deepest:       #080808;
+    --geode-bg-deep:          #0e0c10;
+    --geode-bg-primary:       #12101a;
+    --geode-bg-secondary:     #1a1726;
+    --geode-bg-tertiary:      #221e30;
+    --geode-bg-elevated:      #2a2540;
+    --geode-bg-hover:         #322c4a;
+
+    /* --- Gold veining accents --- */
+    --geode-gold:             #c4a265;
+    --geode-gold-bright:      #d4b876;
+    --geode-gold-dim:         #a8894e;
+    --geode-gold-subtle:      rgba(196, 162, 101, 0.15);
+    --geode-gold-border:      rgba(196, 162, 101, 0.25);
+
+    /* --- Amethyst purples --- */
+    --geode-purple-deep:      #2d1b4e;
+    --geode-purple-mid:       #4a2272;
+    --geode-purple:           #6b3fa0;
+    --geode-purple-bright:    #7b52b0;
+    --geode-purple-light:     #9b7cc4;
+
+    /* --- Teal/emerald greens --- */
+    --geode-teal-deep:        #0d4d42;
+    --geode-teal:             #1a6b5a;
+    --geode-teal-bright:      #2a8a75;
+    --geode-teal-light:       #3aa88f;
+    --geode-teal-subtle:      rgba(26, 107, 90, 0.2);
+
+    /* --- Lavender crystal --- */
+    --geode-lavender:         #b49dd6;
+    --geode-lavender-light:   #d4c8e8;
+    --geode-crystal:          #e8e0f0;
+    --geode-crystal-bright:   #f0ebf7;
+
+    /* --- Text hierarchy --- */
+    --geode-text-primary:     #e8e0f0;
+    --geode-text-secondary:   #b49dd6;
+    --geode-text-tertiary:    #8a72a8;
+    --geode-text-muted:       #6b5a88;
+
+    /* --- Semantic --- */
+    --geode-danger:           #c44a6b;
+    --geode-success:          #2a8a75;
+    --geode-warning:          #c4a265;
+    --geode-info:             #7b52b0;
+  }
+
+  /* ============================================================
+     BASE / BODY — Dark marble foundation
+     ============================================================ */
+
+  html,
+  body {
+    background-color: var(--geode-bg-deepest) !important;
+    color: var(--geode-text-primary) !important;
+  }
+
+  body {
+    /* Subtle marble veining texture via CSS gradient */
+    background-image:
+      radial-gradient(ellipse at 15% 25%, rgba(196, 162, 101, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 75%, rgba(107, 63, 160, 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(26, 107, 90, 0.03) 0%, transparent 60%),
+      linear-gradient(135deg, rgba(196, 162, 101, 0.015) 0%, transparent 30%, rgba(107, 63, 160, 0.02) 50%, transparent 70%, rgba(26, 107, 90, 0.015) 100%) !important;
+    background-attachment: fixed !important;
+  }
+
+  /* ============================================================
+     SCROLLBARS — Thin gold-veined
+     ============================================================ */
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--geode-gold-dim) var(--geode-bg-deep);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--geode-bg-deep);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--geode-gold-dim);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--geode-gold);
+  }
+
+  /* ============================================================
+     SIDEBAR / NAV — Deep amethyst cavern
+     ============================================================ */
+
+  /* Sidebar container */
+  nav,
+  [data-testid="sidebar"],
+  div[class*="sidebar"],
+  div[class*="Sidebar"],
+  aside {
+    background-color: var(--geode-bg-deep) !important;
+    border-right: 1px solid var(--geode-gold-border) !important;
+  }
+
+  /* Sidebar items */
+  nav a,
+  nav button,
+  [data-testid="sidebar"] a,
+  [data-testid="sidebar"] button,
+  aside a,
+  aside button {
+    color: var(--geode-text-secondary) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  nav a:hover,
+  nav button:hover,
+  [data-testid="sidebar"] a:hover,
+  [data-testid="sidebar"] button:hover,
+  aside a:hover,
+  aside button:hover {
+    background-color: var(--geode-purple-deep) !important;
+    color: var(--geode-lavender-light) !important;
+  }
+
+  /* Active/selected conversation */
+  nav a[aria-current],
+  nav a[class*="active"],
+  nav a[class*="Active"],
+  nav a[class*="selected"],
+  [data-testid="sidebar"] a[class*="active"],
+  [data-testid="sidebar"] a[class*="Active"] {
+    background-color: var(--geode-purple-deep) !important;
+    color: var(--geode-crystal) !important;
+    border-left: 3px solid var(--geode-gold) !important;
+  }
+
+  /* Sidebar header / brand area */
+  nav header,
+  nav [class*="header"],
+  aside header {
+    border-bottom: 1px solid var(--geode-gold-border) !important;
+  }
+
+  /* ============================================================
+     MAIN CONTENT AREA
+     ============================================================ */
+
+  main,
+  [role="main"],
+  div[class*="main-content"],
+  div[class*="MainContent"],
+  div[class*="conversation"] {
+    background-color: var(--geode-bg-deepest) !important;
+  }
+
+  /* ============================================================
+     CHAT MESSAGES
+     ============================================================ */
+
+  /* User messages — teal-emerald geode band */
+  div[data-testid*="user-message"],
+  div[class*="user-message"],
+  div[class*="UserMessage"],
+  div[class*="human-message"],
+  div[class*="HumanMessage"],
+  [data-is-streaming="false"][class*="human"],
+  div[class*="from-user"] {
+    background-color: var(--geode-teal-deep) !important;
+    border: 1px solid rgba(26, 107, 90, 0.35) !important;
+    border-radius: 12px !important;
+    color: var(--geode-crystal-bright) !important;
+  }
+
+  /* Assistant messages — amethyst crystal band */
+  div[data-testid*="assistant-message"],
+  div[class*="assistant-message"],
+  div[class*="AssistantMessage"],
+  div[class*="ai-message"],
+  div[class*="AiMessage"],
+  div[class*="from-assistant"],
+  div[class*="claude-message"] {
+    background-color: var(--geode-bg-secondary) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 12px !important;
+    color: var(--geode-text-primary) !important;
+  }
+
+  /* Message text readability */
+  div[data-testid*="message"] p,
+  div[class*="message"] p,
+  div[class*="Message"] p {
+    color: var(--geode-text-primary) !important;
+    line-height: 1.65 !important;
+  }
+
+  /* ============================================================
+     INPUT / COMPOSER AREA — Geode cavity glow
+     ============================================================ */
+
+  /* Composer container */
+  div[class*="composer"],
+  div[class*="Composer"],
+  div[class*="input-area"],
+  div[class*="InputArea"],
+  div[class*="chat-input"],
+  form[class*="input"],
+  footer {
+    background-color: var(--geode-bg-deep) !important;
+    border-top: 1px solid var(--geode-gold-border) !important;
+  }
+
+  /* Text input / contenteditable */
+  textarea,
+  div[contenteditable="true"],
+  div[class*="ProseMirror"],
+  div[role="textbox"],
+  input[type="text"] {
+    background-color: var(--geode-bg-primary) !important;
+    color: var(--geode-text-primary) !important;
+    border: 1px solid var(--geode-purple-deep) !important;
+    border-radius: 10px !important;
+    caret-color: var(--geode-gold-bright) !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+  }
+
+  textarea:focus,
+  div[contenteditable="true"]:focus,
+  div[class*="ProseMirror"]:focus,
+  div[role="textbox"]:focus,
+  input[type="text"]:focus {
+    border-color: var(--geode-gold) !important;
+    box-shadow: 0 0 0 2px var(--geode-gold-subtle), 0 0 20px rgba(196, 162, 101, 0.1) !important;
+    outline: none !important;
+  }
+
+  /* Placeholder text */
+  textarea::placeholder,
+  input::placeholder,
+  div[contenteditable="true"][data-placeholder]::before,
+  [class*="placeholder"] {
+    color: var(--geode-text-muted) !important;
+    opacity: 1 !important;
+  }
+
+  /* ============================================================
+     BUTTONS — Gold-veined actions
+     ============================================================ */
+
+  /* Primary buttons (send, submit) */
+  button[class*="primary"],
+  button[class*="Primary"],
+  button[type="submit"],
+  button[aria-label*="Send"],
+  button[aria-label*="send"],
+  button[class*="send"],
+  button[class*="Send"] {
+    background: linear-gradient(135deg, var(--geode-purple) 0%, var(--geode-purple-mid) 100%) !important;
+    color: var(--geode-crystal-bright) !important;
+    border: 1px solid var(--geode-gold-dim) !important;
+    border-radius: 8px !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 2px 8px rgba(107, 63, 160, 0.3) !important;
+  }
+
+  button[class*="primary"]:hover,
+  button[class*="Primary"]:hover,
+  button[type="submit"]:hover,
+  button[aria-label*="Send"]:hover,
+  button[class*="send"]:hover,
+  button[class*="Send"]:hover {
+    background: linear-gradient(135deg, var(--geode-purple-bright) 0%, var(--geode-purple) 100%) !important;
+    border-color: var(--geode-gold) !important;
+    box-shadow: 0 4px 16px rgba(107, 63, 160, 0.45), 0 0 12px var(--geode-gold-subtle) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Secondary / ghost buttons */
+  button[class*="secondary"],
+  button[class*="Secondary"],
+  button[class*="ghost"],
+  button[class*="Ghost"],
+  button[class*="outline"],
+  button[class*="Outline"] {
+    background-color: transparent !important;
+    color: var(--geode-text-secondary) !important;
+    border: 1px solid var(--geode-purple-deep) !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  button[class*="secondary"]:hover,
+  button[class*="Secondary"]:hover,
+  button[class*="ghost"]:hover,
+  button[class*="Ghost"]:hover {
+    background-color: var(--geode-purple-deep) !important;
+    border-color: var(--geode-purple) !important;
+    color: var(--geode-lavender-light) !important;
+  }
+
+  /* Icon buttons (copy, edit, thumbs) */
+  button[class*="icon"],
+  button[class*="Icon"],
+  button[aria-label*="Copy"],
+  button[aria-label*="copy"],
+  button[aria-label*="Retry"],
+  button[aria-label*="Edit"],
+  button[aria-label*="thumb"] {
+    color: var(--geode-text-tertiary) !important;
+    transition: color 0.2s ease !important;
+  }
+
+  button[class*="icon"]:hover,
+  button[class*="Icon"]:hover,
+  button[aria-label*="Copy"]:hover,
+  button[aria-label*="copy"]:hover,
+  button[aria-label*="Retry"]:hover,
+  button[aria-label*="Edit"]:hover,
+  button[aria-label*="thumb"]:hover {
+    color: var(--geode-gold) !important;
+  }
+
+  /* ============================================================
+     CODE BLOCKS — Deep geode cavity
+     ============================================================ */
+
+  pre,
+  pre[class*="code"],
+  div[class*="code-block"],
+  div[class*="CodeBlock"] {
+    background-color: var(--geode-bg-deepest) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  code {
+    color: var(--geode-lavender-light) !important;
+    font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace !important;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    background-color: var(--geode-bg-tertiary) !important;
+    color: var(--geode-teal-bright) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(26, 107, 90, 0.2) !important;
+    font-size: 0.9em !important;
+  }
+
+  /* Code block header (language label / copy button bar) */
+  div[class*="code-block"] > div:first-child,
+  div[class*="CodeBlock"] > div:first-child,
+  div[class*="code-header"],
+  div[class*="CodeHeader"] {
+    background-color: var(--geode-bg-secondary) !important;
+    border-bottom: 1px solid var(--geode-gold-border) !important;
+    color: var(--geode-text-tertiary) !important;
+  }
+
+  /* Syntax highlighting overrides — geode-inspired token colors */
+  .token.comment,
+  .token.prolog,
+  .token.doctype {
+    color: var(--geode-text-muted) !important;
+    font-style: italic !important;
+  }
+
+  .token.keyword,
+  .token.tag,
+  .token.boolean,
+  .token.constant {
+    color: var(--geode-purple-bright) !important;
+  }
+
+  .token.string,
+  .token.attr-value {
+    color: var(--geode-teal-bright) !important;
+  }
+
+  .token.number,
+  .token.builtin {
+    color: var(--geode-gold-bright) !important;
+  }
+
+  .token.function {
+    color: var(--geode-lavender) !important;
+  }
+
+  .token.property,
+  .token.class-name {
+    color: var(--geode-teal-light) !important;
+  }
+
+  .token.operator,
+  .token.punctuation {
+    color: var(--geode-text-secondary) !important;
+  }
+
+  .token.variable {
+    color: var(--geode-crystal) !important;
+  }
+
+  /* Highlight.js fallback classes */
+  .hljs-keyword { color: var(--geode-purple-bright) !important; }
+  .hljs-string { color: var(--geode-teal-bright) !important; }
+  .hljs-number { color: var(--geode-gold-bright) !important; }
+  .hljs-function { color: var(--geode-lavender) !important; }
+  .hljs-comment { color: var(--geode-text-muted) !important; font-style: italic !important; }
+  .hljs-built_in { color: var(--geode-gold) !important; }
+  .hljs-title { color: var(--geode-lavender-light) !important; }
+  .hljs-type { color: var(--geode-teal-light) !important; }
+  .hljs-attr { color: var(--geode-gold-dim) !important; }
+  .hljs-variable { color: var(--geode-crystal) !important; }
+
+  /* ============================================================
+     MARKDOWN CONTENT — Crystal-clear typography
+     ============================================================ */
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--geode-crystal) !important;
+    border-bottom-color: var(--geode-gold-border) !important;
+  }
+
+  h1 { color: var(--geode-gold-bright) !important; }
+  h2 { color: var(--geode-lavender-light) !important; }
+  h3 { color: var(--geode-teal-bright) !important; }
+
+  /* Links — gold veins */
+  a {
+    color: var(--geode-gold) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+  }
+
+  a:hover {
+    color: var(--geode-gold-bright) !important;
+    text-decoration: underline !important;
+  }
+
+  /* Blockquotes — geode banding */
+  blockquote {
+    border-left: 3px solid var(--geode-purple) !important;
+    background-color: var(--geode-bg-secondary) !important;
+    color: var(--geode-text-secondary) !important;
+    padding: 10px 16px !important;
+    border-radius: 0 8px 8px 0 !important;
+    margin: 12px 0 !important;
+  }
+
+  /* Horizontal rules — gold vein separator */
+  hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, var(--geode-gold-dim), var(--geode-gold), var(--geode-gold-dim), transparent) !important;
+    margin: 20px 0 !important;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse !important;
+    border: 1px solid var(--geode-gold-border) !important;
+  }
+
+  th {
+    background-color: var(--geode-purple-deep) !important;
+    color: var(--geode-lavender-light) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    padding: 8px 12px !important;
+  }
+
+  td {
+    background-color: var(--geode-bg-secondary) !important;
+    color: var(--geode-text-primary) !important;
+    border: 1px solid rgba(196, 162, 101, 0.12) !important;
+    padding: 8px 12px !important;
+  }
+
+  tr:hover td {
+    background-color: var(--geode-bg-tertiary) !important;
+  }
+
+  /* Lists */
+  li {
+    color: var(--geode-text-primary) !important;
+  }
+
+  li::marker {
+    color: var(--geode-gold-dim) !important;
+  }
+
+  /* Bold & italic */
+  strong, b {
+    color: var(--geode-crystal-bright) !important;
+    font-weight: 600 !important;
+  }
+
+  em, i {
+    color: var(--geode-lavender) !important;
+  }
+
+  /* ============================================================
+     DROPDOWNS / MENUS / POPUPS
+     ============================================================ */
+
+  div[role="menu"],
+  div[role="listbox"],
+  div[class*="dropdown"],
+  div[class*="Dropdown"],
+  div[class*="popover"],
+  div[class*="Popover"],
+  div[class*="menu"],
+  div[class*="Menu"],
+  ul[role="menu"],
+  div[data-radix-popper-content-wrapper] {
+    background-color: var(--geode-bg-secondary) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 1px var(--geode-gold-border) !important;
+  }
+
+  div[role="menuitem"],
+  div[role="option"],
+  li[role="menuitem"],
+  li[role="option"] {
+    color: var(--geode-text-secondary) !important;
+    transition: all 0.15s ease !important;
+  }
+
+  div[role="menuitem"]:hover,
+  div[role="option"]:hover,
+  li[role="menuitem"]:hover,
+  li[role="option"]:hover,
+  div[role="menuitem"][data-highlighted],
+  div[role="option"][data-highlighted] {
+    background-color: var(--geode-purple-deep) !important;
+    color: var(--geode-crystal) !important;
+  }
+
+  /* ============================================================
+     MODALS / DIALOGS
+     ============================================================ */
+
+  div[role="dialog"],
+  div[class*="modal"],
+  div[class*="Modal"],
+  div[class*="dialog"],
+  div[class*="Dialog"] {
+    background-color: var(--geode-bg-primary) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6), 0 0 2px var(--geode-gold-border) !important;
+    color: var(--geode-text-primary) !important;
+  }
+
+  /* Dialog overlay/backdrop */
+  div[class*="overlay"],
+  div[class*="Overlay"],
+  div[class*="backdrop"],
+  div[class*="Backdrop"] {
+    background-color: rgba(8, 8, 8, 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+
+  /* ============================================================
+     TOOLTIPS
+     ============================================================ */
+
+  div[role="tooltip"],
+  div[class*="tooltip"],
+  div[class*="Tooltip"] {
+    background-color: var(--geode-bg-elevated) !important;
+    color: var(--geode-lavender-light) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 6px !important;
+    font-size: 0.85em !important;
+  }
+
+  /* ============================================================
+     SETTINGS / PANELS
+     ============================================================ */
+
+  div[class*="settings"],
+  div[class*="Settings"],
+  div[class*="panel"],
+  div[class*="Panel"],
+  div[class*="preferences"],
+  div[class*="Preferences"] {
+    background-color: var(--geode-bg-primary) !important;
+    color: var(--geode-text-primary) !important;
+  }
+
+  /* Tabs */
+  button[role="tab"],
+  a[role="tab"] {
+    color: var(--geode-text-tertiary) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  button[role="tab"]:hover,
+  a[role="tab"]:hover {
+    color: var(--geode-lavender) !important;
+  }
+
+  button[role="tab"][aria-selected="true"],
+  a[role="tab"][aria-selected="true"],
+  button[role="tab"][data-state="active"],
+  a[role="tab"][data-state="active"] {
+    color: var(--geode-gold) !important;
+    border-bottom-color: var(--geode-gold) !important;
+    box-shadow: 0 1px 0 0 var(--geode-gold) !important;
+  }
+
+  /* ============================================================
+     BADGES / PILLS / TAGS
+     ============================================================ */
+
+  span[class*="badge"],
+  span[class*="Badge"],
+  span[class*="tag"],
+  span[class*="Tag"],
+  span[class*="pill"],
+  span[class*="Pill"],
+  div[class*="chip"],
+  div[class*="Chip"] {
+    background-color: var(--geode-purple-deep) !important;
+    color: var(--geode-lavender) !important;
+    border: 1px solid rgba(107, 63, 160, 0.3) !important;
+    border-radius: 99px !important;
+  }
+
+  /* ============================================================
+     TOGGLE / SWITCH
+     ============================================================ */
+
+  button[role="switch"],
+  div[class*="toggle"],
+  div[class*="Toggle"],
+  div[class*="switch"],
+  div[class*="Switch"] {
+    background-color: var(--geode-bg-tertiary) !important;
+    border: 1px solid var(--geode-purple-deep) !important;
+  }
+
+  button[role="switch"][aria-checked="true"],
+  button[role="switch"][data-state="checked"] {
+    background-color: var(--geode-teal) !important;
+    border-color: var(--geode-teal-bright) !important;
+  }
+
+  /* ============================================================
+     LOADING / STREAMING INDICATORS
+     ============================================================ */
+
+  div[class*="loading"],
+  div[class*="Loading"],
+  div[class*="spinner"],
+  div[class*="Spinner"],
+  div[class*="typing"],
+  div[class*="Typing"],
+  div[class*="streaming"],
+  div[class*="Streaming"] {
+    color: var(--geode-purple-light) !important;
+  }
+
+  /* Pulsing dot animation override */
+  @keyframes geode-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+  }
+
+  div[class*="typing"] span,
+  div[class*="Typing"] span,
+  div[class*="dot"],
+  div[class*="Dot"] {
+    background-color: var(--geode-purple-bright) !important;
+  }
+
+  /* ============================================================
+     MODEL SELECTOR / PICKER
+     ============================================================ */
+
+  div[class*="model-selector"],
+  div[class*="ModelSelector"],
+  div[class*="model-picker"],
+  div[class*="ModelPicker"],
+  button[class*="model"],
+  button[class*="Model"] {
+    color: var(--geode-text-secondary) !important;
+    border-color: var(--geode-purple-deep) !important;
+  }
+
+  /* ============================================================
+     FILE UPLOAD / ATTACHMENT AREA
+     ============================================================ */
+
+  div[class*="upload"],
+  div[class*="Upload"],
+  div[class*="attachment"],
+  div[class*="Attachment"],
+  div[class*="file-preview"],
+  div[class*="FilePreview"] {
+    background-color: var(--geode-bg-secondary) !important;
+    border: 1px dashed var(--geode-purple) !important;
+    border-radius: 10px !important;
+    color: var(--geode-text-secondary) !important;
+  }
+
+  /* ============================================================
+     ARTIFACTS / PREVIEW PANEL
+     ============================================================ */
+
+  div[class*="artifact"],
+  div[class*="Artifact"],
+  div[class*="preview-panel"],
+  div[class*="PreviewPanel"],
+  div[class*="side-panel"],
+  div[class*="SidePanel"] {
+    background-color: var(--geode-bg-primary) !important;
+    border-left: 1px solid var(--geode-gold-border) !important;
+  }
+
+  /* ============================================================
+     SELECTION & FOCUS RINGS
+     ============================================================ */
+
+  ::selection {
+    background-color: rgba(107, 63, 160, 0.4) !important;
+    color: var(--geode-crystal-bright) !important;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--geode-gold) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* ============================================================
+     DIVIDERS & BORDERS — Gold veining throughout
+     ============================================================ */
+
+  div[class*="divider"],
+  div[class*="Divider"],
+  div[class*="separator"],
+  div[class*="Separator"],
+  [class*="border-b"],
+  [class*="border-t"] {
+    border-color: var(--geode-gold-border) !important;
+  }
+
+  /* ============================================================
+     SVG ICONS — Inherit theme colors
+     ============================================================ */
+
+  svg {
+    color: inherit !important;
+  }
+
+  /* ============================================================
+     TOAST / NOTIFICATION
+     ============================================================ */
+
+  div[class*="toast"],
+  div[class*="Toast"],
+  div[class*="notification"],
+  div[class*="Notification"],
+  div[class*="snackbar"],
+  div[class*="Snackbar"] {
+    background-color: var(--geode-bg-elevated) !important;
+    color: var(--geode-text-primary) !important;
+    border: 1px solid var(--geode-gold-border) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* ============================================================
+     USAGE / PROGRESS BARS
+     ============================================================ */
+
+  div[class*="progress"],
+  div[class*="Progress"],
+  div[role="progressbar"] {
+    background-color: var(--geode-bg-tertiary) !important;
+    border-radius: 99px !important;
+  }
+
+  div[class*="progress"] > div,
+  div[class*="Progress"] > div,
+  div[role="progressbar"] > div {
+    background: linear-gradient(90deg, var(--geode-teal-deep), var(--geode-teal), var(--geode-teal-bright)) !important;
+    border-radius: 99px !important;
+  }
+
+  /* ============================================================
+     GLOBAL CATCH-ALL — Ensure full dark coverage
+     ============================================================ */
+
+  /* White background overrides */
+  div[class*="bg-white"],
+  div[class*="bg-gray-50"],
+  div[class*="bg-gray-100"],
+  [class*="bg-token-main-surface"] {
+    background-color: var(--geode-bg-primary) !important;
+  }
+
+  /* Light text overrides */
+  [class*="text-gray-500"],
+  [class*="text-gray-600"],
+  [class*="text-gray-700"] {
+    color: var(--geode-text-tertiary) !important;
+  }
+
+  [class*="text-gray-800"],
+  [class*="text-gray-900"],
+  [class*="text-black"] {
+    color: var(--geode-text-primary) !important;
+  }
+
+  /* Border color overrides */
+  [class*="border-gray"],
+  [class*="border-token"],
+  [class*="divide-gray"] > * + * {
+    border-color: var(--geode-gold-border) !important;
+  }
+
+  /* ============================================================
+     SMOOTH TRANSITIONS — Polish
+     ============================================================ */
+
+  a, button, input, textarea, select,
+  div[role="menuitem"],
+  div[role="option"],
+  nav a, nav button {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+}

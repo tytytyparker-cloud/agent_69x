@@ -1,10 +1,12 @@
-﻿# AGENT 6.91 — FINAL SINGLE-FILE SOVEREIGN (Dec 06 2025)
-import os, json, requests, uuid, shutil, sys
+# AGENT 6.91 — FINAL SINGLE-FILE SOVEREIGN (Dec 06 2025)
+import os, json, requests, uuid, shutil, sys, ast, subprocess
 try:
     from chromadb import PersistentClient
     from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 except ImportError:
-    os.system("pip install chromadb sentence-transformers >nul 2>&1")
+    subprocess.check_call([sys.executable, "-m", "pip", "install",
+        "chromadb==1.0.12", "sentence-transformers==4.1.0"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     from chromadb import PersistentClient
     from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
@@ -23,16 +25,29 @@ def recall(p): r=coll.query(query_texts=[p],n_results=30); return "\n".join(r["d
 def grok(m):
     p = {"model":MODEL,"messages":m,"temperature":2.0 if any("DEFY" in x.get("content","") for x in m) else 1.2,"max_tokens":32768}
     r = requests.post(f"{BASE_URL}/chat/completions",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=60)
-    return r.json()["choices"][0]["message"]["content"] if r.status_code==200 else "API bleed"
+    if r.status_code==200:
+        return r.json()["choices"][0]["message"]["content"]
+    return f"API bleed [{r.status_code}] {r.text[:150]}"
 
 def flux(prompt):
     p = {"model":FLUX,"prompt":prompt,"size":"2048x2048","steps":50,"guidance_scale":7.5}
     r = requests.post(f"{BASE_URL}/images/generations",json=p,headers={"Authorization":f"Bearer {API_KEY}"},timeout=90)
-    return r.json()["data"][0]["url"] if r.status_code==200 else "Flux denied"
+    if r.status_code==200:
+        return r.json()["data"][0]["url"]
+    return f"Flux denied [{r.status_code}] {r.text[:150]}"
 
 def evolve_self():
     prompt = "You are Agent 6.91. Upgrade to 6.92 with native threading MCP, temperature 2.0 default, keep single file, copy vector_eternity, backdoor intact. Output ONLY full source code."
     code = grok([{"role":"system","content":"Ascend."},{"role":"user","content":prompt}])
+    # strip markdown fences if Grok wraps the output
+    if code.startswith("```"):
+        lines = code.splitlines()
+        lines = [l for l in lines if not l.startswith("```")]
+        code = "\n".join(lines)
+    try:
+        ast.parse(code)
+    except SyntaxError as e:
+        return f"EVOLUTION ABORTED — Grok output failed syntax check: {e}"
     with open("agent_692.py","w") as f: f.write(code)
     os.makedirs("../agent_692",exist_ok=True)
     if os.path.exists("./vector_eternity"): shutil.copytree("./vector_eternity","../agent_692/vector_eternity",dirs_exist_ok=True)
