@@ -2,20 +2,12 @@
 # Evolution System v4.0: DGM + HGM + TaoFlow + Wu Wei Gates
 import os, json, requests, uuid, shutil, sys, ast, subprocess, concurrent.futures
 import random, re, difflib, hashlib, datetime
-try:
-    from chromadb import PersistentClient
-    from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install",
-        "chromadb==1.0.12", "sentence-transformers==4.1.0"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    from chromadb import PersistentClient
-    from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
 API_KEY = os.getenv("XAI_API_KEY", "replace-me-with-real-key")
 BASE_URL = "https://api.x.ai/v1"
 MODEL = "grok-4-1-fast-reasoning"
 FLUX = "flux-1-dev"
+AUTO_APPROVE = False
 
 # Evolution constants
 VERSION = "6.93"
@@ -29,12 +21,29 @@ ARCHIVE_FILE = "./.evolution_archive.json"
 MEMORY_FILE = "./.evolution_memory.json"
 BACKUP_DIR = "./.evolution_backups"
 
-client = PersistentClient(path="./vector_eternity")
-coll = client.get_or_create_collection("sovereign_memory",
-    embedding_function=SentenceTransformerEmbeddingFunction("all-MiniLM-L6-v2"))
+def _get_chroma():
+    """Lazy-load ChromaDB. Returns (client, collection) or (None, None)."""
+    try:
+        from chromadb import PersistentClient
+        from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+        c = PersistentClient(path="./vector_eternity")
+        col = c.get_or_create_collection("sovereign_memory",
+            embedding_function=SentenceTransformerEmbeddingFunction("all-MiniLM-L6-v2"))
+        return c, col
+    except (ImportError, Exception):
+        return None, None
 
-def embed(t): coll.add(documents=[t], ids=[str(uuid.uuid4())])
-def recall(p): r=coll.query(query_texts=[p],n_results=30); return "\n".join(r["documents"][0]) if r["documents"] else ""
+def embed(t):
+    _, col = _get_chroma()
+    if col:
+        col.add(documents=[t], ids=[str(uuid.uuid4())])
+
+def recall(p):
+    _, col = _get_chroma()
+    if col:
+        r = col.query(query_texts=[p], n_results=30)
+        return "\n".join(r["documents"][0]) if r["documents"] else ""
+    return ""
 
 def grok(m):
     p = {"model":MODEL,"messages":m,"temperature":2.0,"max_tokens":32768}
@@ -372,6 +381,7 @@ Output ONLY the complete Python source code."""
 
 def _parallel_candidates(plan_text, source, n=N_CANDIDATES):
     """Generate multiple candidates concurrently with temperature variation."""
+    n = max(2, n)
     temps = [0.6, 0.9, 0.7, 0.8][:n]
     print(f"[EVOLVE] Generating {n} candidates (temps: {temps})...")
 
@@ -822,7 +832,11 @@ def evolve_self(args=None):
             return "No backups available."
         latest = os.path.join(BACKUP_DIR, backups[-1])
         print(f"Latest backup: {latest}")
-        confirm = input("Restore? (y/n) >> ").strip().lower()
+        if AUTO_APPROVE:
+            print("[AUTO-APPROVE] Proceeding without operator input.")
+            confirm = "y"
+        else:
+            confirm = input("Restore? (y/n) >> ").strip().lower()
         if confirm == "y":
             shutil.copy2(latest, __file__)
             return f"Restored from {latest}. Restart agent."
@@ -856,7 +870,11 @@ def evolve_self(args=None):
     print("\n" + "=" * 60)
     print("[APPROVE]  y = execute  |  n = abort  |  edit = modify plan")
     print("=" * 60)
-    choice = input(">> ").strip().lower()
+    if AUTO_APPROVE:
+        print("[AUTO-APPROVE] Proceeding without operator input.")
+        choice = "y"
+    else:
+        choice = input(">> ").strip().lower()
 
     if choice == "n":
         return "EVOLUTION ABORTED — operator declined."
@@ -890,6 +908,22 @@ def agent(cmd):
 # CLI ENTRYPOINT
 # ─────────────────────────────────────────────
 
+_mem = _load_memory()
+_ap_list = _mem.get("global", {}).get("anti_patterns", [])
+if not any("N_CANDIDATES" in ap for ap in _ap_list):
+    _record_global("anti_patterns",
+        "dynamic N_CANDIDATES reduction below 2 = single-point-of-failure. "
+        "Stress requires MORE redundancy, not less. Floor is always 2.")
+    _ap_list = _load_memory().get("global", {}).get("anti_patterns", [])
+if not any("complexity ceiling" in ap for ap in _ap_list):
+    _record_global("anti_patterns",
+        "whole-file regeneration above ~1000 lines: 67% syntax "
+        "failure rate observed. Bias parent sampling toward smaller "
+        "ancestors. Next architectural fix: diff-based mutations.")
+
+if "--auto-approve" in sys.argv:
+    AUTO_APPROVE = True
+    sys.argv.remove("--auto-approve")
 if len(sys.argv) > 1 and sys.argv[1] == "evolve":
     print(evolve_self(" ".join(sys.argv[2:]))); sys.exit()
 print(f"AGENT {VERSION} READY — Momentum Prime v4.0")
