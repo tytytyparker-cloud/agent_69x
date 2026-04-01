@@ -1,0 +1,42 @@
+The following is raw output from direct analysis of the Claude Code
+v2.1.88 binary / Stripe patch repo / sanbuphy source mirror.
+
+Stripe Patch History:
+7c021ff Read last 10 releases instead 2026-02-19
+c2699e9 Update readme from 5 to 10 hotpatches 2026-02-19
+81c2c95 Update README to reflect five stable versions 2026-02-18
+48524ff Update release script to fetch previous 5 versions 2026-02-18
+fe20953 vaguely improve readme 2026-02-14
+51f0794 Fix version sorting 2026-02-13
+048a49e Delete scary rm -rf 2026-02-09
+bfe0fbd Remove bump message 2026-02-07
+b7bbbf7 Create LICENSE 2026-01-25
+902aee3 include architecture 2026-01-20
+edd323f add initial bspatcher (#1) 2026-01-20
+c7c8abd Update README with API links and formatting 2026-01-20
+e82cdf7 Create README.md 2026-01-20
+3d68dd4 Add auto-release workflow for scheduled releases 2026-01-20
+
+High Value Targets in Source Mirror:
+./src/types/generated/events_mono/growthbook/v1/growthbook_experiment_event.ts
+./src/types/generated/events_mono/common/v1/auth.ts
+./src/types/generated/events_mono/claude_code/v1/claude_code_internal_event.ts
+./src/entrypoints/sdk/controlSchemas.ts
+./src/services/api/adminRequests.ts
+./src/services/api/dumpPrompts.ts
+./src/services/analytics/sinkKillswitch.ts
+
+String findings from constants:
+claude-code-source-code/src/constants/prompts.ts:    getFeatureValue_CACHED_MAY_BE_STALE('tengu_hive_evidence', false)
+claude-code-source-code/src/constants/prompts.ts:    systemPromptSection('ant_model_override', () =>
+claude-code-source-code/src/constants/system.ts:  return getFeatureValue_CACHED_MAY_BE_STALE('tengu_attribution_header', true)
+claude-code-source-code/src/constants/system.ts: * When NATIVE_CLIENT_ATTESTATION is enabled, includes a `cch=00000` placeholder.
+claude-code-source-code/src/constants/system.ts:  // cch=00000 placeholder is overwritten by Bun's HTTP stack with attestation token
+claude-code-source-code/src/constants/system.ts:  const cch = feature('NATIVE_CLIENT_ATTESTATION') ? ' cch=00000;' : ''
+claude-code-source-code/src/constants/system.ts:  // cch attestation (placeholder overwritten in serialized body bytes after
+claude-code-source-code/src/constants/system.ts:  const header = `x-anthropic-billing-header: cc_version=${version}; cc_entrypoint=${entrypoint};${cch}${workloadPair}`
+claude-code-source-code/src/constants/toolLimits.ts: * Overridable at runtime via GrowthBook flag tengu_hawthorn_window — see
+claude-code-source-code/src/constants/product.ts: * tengu_bridge_repl_v2_cse_shim_enabled (see isCseShimEnabled). Worker
+
+Endpoint Probe Result for wss://api.anthropic.com/v1/code/upstreamproxy/ws (with x-api-key: ANY_API_KEY_JUST_WANT_ERROR):
+HTTP/2 404 page not found
