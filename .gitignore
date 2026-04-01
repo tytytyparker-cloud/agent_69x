@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 vector_eternity/
 .claude/settings.local.json
+claude-2.1.87-linux-x64
+v2187_strings_full.txt
+cc-versions/
+claude-code-patches/
+claude-code-source-code/
+claude-linux-x64
+*.txt
